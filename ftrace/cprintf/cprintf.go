@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"strings"
 
-	"traceout/ftrace/cparse"
+	"github.com/google/traceout/ftrace/cparse"
 )
 
 type printfFunction struct {

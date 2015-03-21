@@ -17,7 +17,7 @@ package ftrace
 import (
 	"strings"
 
-	"traceout/ftrace/cparse"
+	"github.com/google/traceout/ftrace/cparse"
 )
 
 type kernelFunc func(cparse.EvalContext, []cparse.Value) cparse.Value

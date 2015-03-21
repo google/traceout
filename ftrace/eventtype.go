@@ -22,8 +22,8 @@ import (
 	"strconv"
 	"strings"
 
-	"traceout/ftrace/cparse"
-	"traceout/ftrace/cprintf"
+	"github.com/google/traceout/ftrace/cparse"
+	"github.com/google/traceout/ftrace/cprintf"
 )
 
 type EventType struct {

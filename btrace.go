@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"traceout/ftrace"
+	"github.com/google/traceout/ftrace"
 )
 
 import _ "net/http/pprof"
