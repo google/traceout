@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"traceout/ftrace"
+	"github.com/google/traceout/ftrace"
 )
 
 import _ "net/http/pprof"
@@ -93,7 +93,7 @@ func do_main() error {
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt)
 
-	f, err := ftrace.Ftrace(fp)
+	f, err := ftrace.New(fp)
 	if err != nil {
 		return err
 	}

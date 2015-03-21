@@ -21,7 +21,7 @@ import (
 	"strings"
 )
 
-type ftrace struct {
+type Ftrace struct {
 	fp                   FileProvider
 	eventTypes           map[int]*EventType
 	selectCases          []reflect.SelectCase
@@ -35,8 +35,8 @@ type ftrace struct {
 	pageHeaderFieldData      int
 }
 
-func Ftrace(fp FileProvider) (*ftrace, error) {
-	f := &ftrace{
+func New(fp FileProvider) (*Ftrace, error) {
+	f := &Ftrace{
 		fp:         fp,
 		eventTypes: make(map[int]*EventType),
 	}
@@ -49,7 +49,7 @@ func Ftrace(fp FileProvider) (*ftrace, error) {
 	return f, nil
 }
 
-func (f *ftrace) init() error {
+func (f *Ftrace) init() error {
 	var err error
 
 	f.pageHeader, err = NewHeaderType(f.fp, "events/header_page")
@@ -65,7 +65,7 @@ func (f *ftrace) init() error {
 	return nil
 }
 
-func (f *ftrace) NewEventType(path string) (*EventType, error) {
+func (f *Ftrace) NewEventType(path string) (*EventType, error) {
 	etype, err := newEventType(f.fp, path)
 	if err != nil {
 		return nil, err
@@ -80,23 +80,23 @@ func (f *ftrace) NewEventType(path string) (*EventType, error) {
 	return etype, nil
 }
 
-func (f *ftrace) Enable() error {
+func (f *Ftrace) Enable() error {
 	return f.fp.WriteFtraceFile("tracing_on", []byte("1"))
 }
 
-func (f *ftrace) Disable() error {
+func (f *Ftrace) Disable() error {
 	return f.fp.WriteFtraceFile("tracing_on", []byte("0"))
 }
 
-func (f *ftrace) Clear() error {
+func (f *Ftrace) Clear() error {
 	return f.fp.WriteFtraceFile("trace", []byte(""))
 }
 
-func (f *ftrace) ReadKernelTrace() ([]byte, error) {
+func (f *Ftrace) ReadKernelTrace() ([]byte, error) {
 	return f.fp.ReadFtraceFile("trace")
 }
 
-func (f *ftrace) PrepareCapture(cpus int, doneCh <-chan bool) error {
+func (f *Ftrace) PrepareCapture(cpus int, doneCh <-chan bool) error {
 	f.selectCases = []reflect.SelectCase{
 		reflect.SelectCase{
 			Dir:  reflect.SelectRecv,
@@ -119,7 +119,7 @@ func (f *ftrace) PrepareCapture(cpus int, doneCh <-chan bool) error {
 	return nil
 }
 
-func (f *ftrace) Capture(callback func(Events)) {
+func (f *Ftrace) Capture(callback func(Events)) {
 	eventArrayType := reflect.TypeOf(Events{})
 
 	for len(f.selectCases) > 1 {
@@ -138,7 +138,7 @@ func (f *ftrace) Capture(callback func(Events)) {
 	}
 }
 
-func (f *ftrace) processName(pid int) string {
+func (f *Ftrace) processName(pid int) string {
 	if !f.isCachedProcessNames {
 		f.isCachedProcessNames = true
 		processNameFile, err := f.fp.ReadFtraceFile("saved_cmdlines")
@@ -162,7 +162,7 @@ func (f *ftrace) processName(pid int) string {
 	return f.cachedProcessNames[pid]
 }
 
-func (f *ftrace) kernelSymbol(addr uint64) string {
+func (f *Ftrace) kernelSymbol(addr uint64) string {
 	if f.cachedKallsyms == nil {
 		f.cachedKallsyms = make(map[uint64]string)
 		// TODO: through fp

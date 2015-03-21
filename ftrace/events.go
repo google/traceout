@@ -53,7 +53,7 @@ var order = binary.LittleEndian
 // TODO: automatically attempt to resync?  Try every byte as a header_page, look for valid type IDs?
 // Or just drop the page, mark lost events, and continue with the next page?
 // Write to doneCh to end
-func (f *ftrace) getEvents(cpu int, doneCh <-chan bool) (<-chan Events, error) {
+func (f *Ftrace) getEvents(cpu int, doneCh <-chan bool) (<-chan Events, error) {
 	rawDoneCh := make(chan bool)
 	eventCh := make(chan Events)
 
@@ -88,7 +88,7 @@ func (f *ftrace) getEvents(cpu int, doneCh <-chan bool) (<-chan Events, error) {
 	return eventCh, nil
 }
 
-func (f *ftrace) decodePage(cpu int, data []byte) (events Events, err error) {
+func (f *Ftrace) decodePage(cpu int, data []byte) (events Events, err error) {
 	page, err := f.pageHeader.DecodeEvent(data, 0, 0)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ dataLoop:
 }
 
 type Event struct {
-	ftrace   *ftrace
+	ftrace   *Ftrace
 	etype    *EventType
 	values   []eventFieldValue
 	Cpu      int
